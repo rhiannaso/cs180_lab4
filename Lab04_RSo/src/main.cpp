@@ -50,6 +50,8 @@ public:
 
 	//animation data
 	float sTheta = 0;
+    float eTheta = 0;
+    float wTheta = 0;
 	float gTrans = 0;
 
 	void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -180,18 +182,18 @@ public:
 			View->translate(vec3(0, 0, -5));
 
 		// Draw a solid colored sphere
-		solidColorProg->bind();
-		glUniformMatrix4fv(solidColorProg->getUniform("P"), 1, GL_FALSE, value_ptr(Projection->topMatrix()));
-		glUniformMatrix4fv(solidColorProg->getUniform("V"), 1, GL_FALSE, value_ptr(View->topMatrix()));
-		glUniform3f(solidColorProg->getUniform("solidColor"), 0.1, 0.2, 0.5);
-		Model->pushMatrix();
-			Model->loadIdentity();
-			Model->translate(vec3(-1.7, -1.7, 0));
-			Model->scale(vec3(0.5, 0.5, 0.5));
-			setModel(prog, Model);
-			mesh->draw(prog);
-		Model->popMatrix();
-		solidColorProg->unbind();
+		// solidColorProg->bind();
+		// glUniformMatrix4fv(solidColorProg->getUniform("P"), 1, GL_FALSE, value_ptr(Projection->topMatrix()));
+		// glUniformMatrix4fv(solidColorProg->getUniform("V"), 1, GL_FALSE, value_ptr(View->topMatrix()));
+		// glUniform3f(solidColorProg->getUniform("solidColor"), 0.1, 0.2, 0.5);
+		// Model->pushMatrix();
+		// 	Model->loadIdentity();
+		// 	Model->translate(vec3(-1.7, -1.7, 0));
+		// 	Model->scale(vec3(0.5, 0.5, 0.5));
+		// 	setModel(prog, Model);
+		// 	mesh->draw(prog);
+		// Model->popMatrix();
+		// solidColorProg->unbind();
 
 		// Draw a stack of cubes with indiviudal transforms
 		prog->bind();
@@ -201,7 +203,7 @@ public:
 		// draw mesh 
 		Model->pushMatrix();
 			Model->loadIdentity();
-			Model->translate(vec3(gTrans, 0, 0));
+			Model->translate(vec3(gTrans, -0.5, -0.5));
 			/* draw top cube - aka head */
 			Model->pushMatrix();
 				Model->translate(vec3(0, 1.4, 0));
@@ -228,14 +230,64 @@ public:
 			    //now draw lower arm - this is INCOMPLETE and you will add a 3rd component
 			  	//right now this is in the SAME place as the upper arm
 			  	Model->pushMatrix();
-			      Model->scale(vec3(0.8, 0.25, 0.25));
-			  	  setModel(prog, Model);
-			  	  mesh->draw(prog);
+                    Model->translate(vec3(0.7, 0, 0)); // place at elbow
+                    Model->rotate(eTheta, vec3(0, 0, 1)); // rotate elbow joint
+                    Model->translate(vec3(0.7, 0, 0)); // move to elbow joint
+
+                    Model->pushMatrix();
+                        Model->translate(vec3(0.55, 0, 0)); // place at wrist
+                        Model->rotate(wTheta, vec3(0, 0, 1)); // rotate elbow joint
+                        Model->translate(vec3(0.2, 0, 0)); // move to elbow joint
+
+                        Model->scale(vec3(0.35, 0.25, 0.25));
+                        setModel(prog, Model);
+                        mesh->draw(prog);
+                    Model->popMatrix();
+
+                    Model->scale(vec3(0.7, 0.25, 0.25));
+                    setModel(prog, Model);
+                    mesh->draw(prog);
 			  	Model->popMatrix();
 
 			  //Do final scale ONLY to upper arm then draw
 			  //non-uniform scale
-			  Model->scale(vec3(0.8, 0.25, 0.25));
+			  Model->scale(vec3(0.8, 0.3, 0.25));
+			  setModel(prog, Model);
+			  mesh->draw(prog);
+			Model->popMatrix();
+
+            // static left arm
+            Model->pushMatrix();
+			  //place at shoulder
+			  Model->translate(vec3(-0.8, 0.8, 0));
+			  //rotate shoulder joint
+			  Model->rotate(3.55, vec3(0, 0, 1));
+			  //move to shoulder joint
+			  Model->translate(vec3(0.8, 0, 0));
+	
+			    //now draw lower arm - this is INCOMPLETE and you will add a 3rd component
+			  	//right now this is in the SAME place as the upper arm
+			  	Model->pushMatrix();
+                    Model->translate(vec3(0.7, 0, 0)); // place at elbow
+                    Model->rotate(2, vec3(0, 0, 1)); // rotate elbow joint
+                    Model->translate(vec3(0.7, 0, 0)); // move to elbow joint
+
+                    Model->pushMatrix();
+                        Model->translate(vec3(0.75, 0, 0)); // place at wrist
+                        Model->rotate(-0.75, vec3(0, 0, 1)); // rotate elbow joint
+                        Model->scale(vec3(0.35, 0.25, 0.25));
+                        setModel(prog, Model);
+                        mesh->draw(prog);
+                    Model->popMatrix();
+
+                    Model->scale(vec3(0.7, 0.25, 0.25));
+                    setModel(prog, Model);
+                    mesh->draw(prog);
+			  	Model->popMatrix();
+
+			  //Do final scale ONLY to upper arm then draw
+			  //non-uniform scale
+			  Model->scale(vec3(0.8, 0.3, 0.25));
 			  setModel(prog, Model);
 			  mesh->draw(prog);
 			Model->popMatrix();
@@ -246,6 +298,10 @@ public:
 
 		//animation update example
 		sTheta = sin(glfwGetTime());
+
+        eTheta = sin(glfwGetTime()) + 1;
+
+        wTheta = sin(3*glfwGetTime());
 
 		// Pop matrix stacks.
 		Projection->popMatrix();
