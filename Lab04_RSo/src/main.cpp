@@ -203,7 +203,7 @@ public:
 		// draw mesh 
 		Model->pushMatrix();
 			Model->loadIdentity();
-			Model->translate(vec3(gTrans, -0.5, -0.5));
+			Model->translate(vec3(gTrans, 0, -2));
 			/* draw top cube - aka head */
 			Model->pushMatrix();
 				Model->translate(vec3(0, 1.4, 0));
@@ -236,8 +236,8 @@ public:
 
                     Model->pushMatrix();
                         Model->translate(vec3(0.55, 0, 0)); // place at wrist
-                        Model->rotate(wTheta, vec3(0, 0, 1)); // rotate elbow joint
-                        Model->translate(vec3(0.2, 0, 0)); // move to elbow joint
+                        Model->rotate(wTheta, vec3(0, 0, 1)); // rotate wrist joint
+                        Model->translate(vec3(0.2, 0, 0)); // move to wrist joint
 
                         Model->scale(vec3(0.35, 0.25, 0.25));
                         setModel(prog, Model);
@@ -274,7 +274,7 @@ public:
 
                     Model->pushMatrix();
                         Model->translate(vec3(0.75, 0, 0)); // place at wrist
-                        Model->rotate(-0.75, vec3(0, 0, 1)); // rotate elbow joint
+                        Model->rotate(-0.75, vec3(0, 0, 1)); // rotate wrist joint
                         Model->scale(vec3(0.35, 0.25, 0.25));
                         setModel(prog, Model);
                         mesh->draw(prog);
@@ -291,6 +291,70 @@ public:
 			  setModel(prog, Model);
 			  mesh->draw(prog);
 			Model->popMatrix();
+
+            // static left leg
+            Model->pushMatrix();
+			  //place at hip
+			  Model->translate(vec3(-0.5, -1.2, 0));
+			  //rotate hip joint
+			  Model->rotate(1.5, vec3(0, 0, 1));
+			  //move to hip joint
+			  Model->translate(vec3(-0.5, 0, 0));
+	
+			  	Model->pushMatrix();
+                    Model->translate(vec3(-1, 0, 0)); // place at knee
+
+                    Model->pushMatrix();
+                        Model->translate(vec3(-0.8, 0, 0)); // place at ankle
+                        Model->rotate(1.5, vec3(0, 0, 1)); // rotate ankle
+
+                        Model->scale(vec3(0.4, 0.25, 0.25));
+                        setModel(prog, Model);
+                        mesh->draw(prog);
+                    Model->popMatrix();
+
+                    Model->scale(vec3(0.7, 0.25, 0.25));
+                    setModel(prog, Model);
+                    mesh->draw(prog);
+			  	Model->popMatrix();
+
+			  //non-uniform scale
+			  Model->scale(vec3(0.8, 0.3, 0.25));
+			  setModel(prog, Model);
+			  mesh->draw(prog);
+			Model->popMatrix();
+
+            // static right leg
+            Model->pushMatrix();
+			  //place at hip
+			  Model->translate(vec3(0.5, -1.2, 0));
+			  //rotate hip joint
+			  Model->rotate(1.6, vec3(0, 0, 1));
+			  //move to hip joint
+			  Model->translate(vec3(-0.5, 0, 0));
+	
+			  	Model->pushMatrix();
+                    Model->translate(vec3(-1, 0, 0)); // place at knee
+
+                    Model->pushMatrix();
+                        Model->translate(vec3(-0.8, 0, 0)); // place at ankle
+                        Model->rotate(1.5, vec3(0, 0, 1)); // rotate ankle
+
+                        Model->scale(vec3(0.4, 0.25, 0.25));
+                        setModel(prog, Model);
+                        mesh->draw(prog);
+                    Model->popMatrix();
+
+                    Model->scale(vec3(0.7, 0.25, 0.25));
+                    setModel(prog, Model);
+                    mesh->draw(prog);
+			  	Model->popMatrix();
+
+			  //non-uniform scale
+			  Model->scale(vec3(0.8, 0.3, 0.25));
+			  setModel(prog, Model);
+			  mesh->draw(prog);
+			Model->popMatrix();
 		
 		Model->popMatrix();
 
@@ -299,9 +363,9 @@ public:
 		//animation update example
 		sTheta = sin(glfwGetTime());
 
-        eTheta = sin(glfwGetTime()) + 1;
+        eTheta = (sin(glfwGetTime()) + 1)/1.5;
 
-        wTheta = sin(3*glfwGetTime());
+        wTheta = sin(4*glfwGetTime())/2;
 
 		// Pop matrix stacks.
 		Projection->popMatrix();
